@@ -1,0 +1,92 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+# Initialize the WebDriver
+driver = webdriver.Chrome(executable_path="path/to/chromedriver")
+
+# 1. Test: User Registration
+def test_user_registration():
+    driver.get("https://www.onlinebanking.com")  # URL for your banking app
+    driver.find_element(By.ID, "register-btn").click()
+    
+    # Fill out the registration form
+    driver.find_element(By.ID, "first-name").send_keys("John")
+    driver.find_element(By.ID, "last-name").send_keys("Doe")
+    driver.find_element(By.ID, "email").send_keys("johndoe@example.com")
+    driver.find_element(By.ID, "password").send_keys("SecurePassword123")
+    driver.find_element(By.ID, "confirm-password").send_keys("SecurePassword123")
+    
+    # Submit the form
+    driver.find_element(By.ID, "submit-btn").click()
+    
+    # Wait for registration confirmation page
+    time.sleep(2)
+    
+    # Check if registration was successful
+    confirmation_message = driver.find_element(By.ID, "confirmation-message").text
+    assert "Registration successful" in confirmation_message, "Registration failed"
+
+    print("User Registration Test Passed")
+
+# 2. Test: Checking Account Balance
+def test_check_account_balance():
+    driver.get("https://www.onlinebanking.com/login")  # URL for login
+    driver.find_element(By.ID, "email").send_keys("johndoe@example.com")
+    driver.find_element(By.ID, "password").send_keys("SecurePassword123")
+    
+    # Click login button
+    driver.find_element(By.ID, "login-btn").click()
+    
+    # Wait for the dashboard to load
+    time.sleep(2)
+    
+    # Check account balance
+    balance_text = driver.find_element(By.ID, "account-balance").text
+    print(f"Account Balance: {balance_text}")
+    
+    # Validate balance is displayed correctly
+    assert "Balance" in balance_text, "Account balance not displayed correctly"
+
+    print("Account Balance Test Passed")
+
+# 3. Test: Money Transfer
+def test_money_transfer():
+    driver.get("https://www.onlinebanking.com/login")  # URL for login
+    driver.find_element(By.ID, "email").send_keys("johndoe@example.com")
+    driver.find_element(By.ID, "password").send_keys("SecurePassword123")
+    
+    # Click login button
+    driver.find_element(By.ID, "login-btn").click()
+    
+    # Wait for the dashboard to load
+    time.sleep(2)
+    
+    # Navigate to 'Transfer Money' section
+    driver.find_element(By.ID, "transfer-btn").click()
+    
+    # Fill out transfer details
+    driver.find_element(By.ID, "recipient-email").send_keys("janedoe@example.com")
+    driver.find_element(By.ID, "amount").send_keys("100")
+    driver.find_element(By.ID, "transfer-submit").click()
+    
+    # Wait for transfer confirmation
+    time.sleep(2)
+    
+    # Check for successful transfer message
+    transfer_message = driver.find_element(By.ID, "transfer-message").text
+    assert "Transfer successful" in transfer_message, "Transfer failed"
+    
+    print("Money Transfer Test Passed")
+
+# Run the tests sequentially
+try:
+    test_user_registration()
+    test_check_account_balance()
+    test_money_transfer()
+except Exception as e:
+    print(f"Test failed: {e}")
+finally:
+    # Clean up: Close the browser after all tests are done
+    driver.quit()
